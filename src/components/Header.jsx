@@ -1,68 +1,52 @@
-import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  LogOut,
-  LayoutDashboard,
-  LogIn,
-  UserPlus,
-  BookCopy,
-} from "lucide-react";
-
-export function Header() {
-  const { user, logado, logout } = useAuth();
+import { Menu, Bell } from "lucide-react";
+import { Link } from "react-router-dom";
+export function Header({ abrirSidebar }) {
+  const { user, logado } = useAuth();
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
+    <header className="bg-white border-b border-slate-200 h-20 sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 shrink-0">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={abrirSidebar}
+          className="p-2 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 lg:hidden transition-colors"
         >
-          <BookCopy className="w-7 h-7" />
-          <span className="font-bold text-xl tracking-tight">
-            Troca de Conhecimento
-          </span>
-        </Link>
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
 
-        <nav className="flex items-center gap-4">
-          {!logado ? (
-            <>
-              <Link
-                to="/login"
-                className="flex items-center gap-2 text-slate-600 hover:text-blue-600 font-medium transition-colors"
-              >
-                <LogIn className="w-4 h-4" /> Entrar
-              </Link>
-              <Link
-                to="/cadastro"
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors"
-              >
-                <UserPlus className="w-4 h-4" /> Cadastrar
-              </Link>
-            </>
-          ) : (
-            <>
-              <span className="text-slate-500 hidden sm:inline">
-                Olá,{" "}
-                <strong className="text-slate-800">
-                  {user?.nome.split(" ")[0]}
-                </strong>
-              </span>
-              <Link
-                to="/dashboard"
-                className="flex items-center gap-2 text-slate-600 hover:text-blue-600 font-medium transition-colors"
-              >
-                <LayoutDashboard className="w-4 h-4" /> Painel
-              </Link>
-              <button
-                onClick={logout}
-                className="flex items-center gap-2 text-red-500 hover:text-red-700 font-medium transition-colors ml-2"
-              >
-                <LogOut className="w-4 h-4" /> Sair
-              </button>
-            </>
-          )}
-        </nav>
+      <div className="flex items-center gap-4">
+        {logado ? (
+          <div className="flex items-center gap-5">
+            <button className="relative p-2 text-slate-400 hover:text-brand transition-colors rounded-full hover:bg-brand-light hidden sm:block">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 border-2 border-white rounded-full"></span>
+            </button>
+
+            <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
+
+            <Link
+              to="/dashboard"
+              className="text-sm text-slate-500 font-medium px-4 py-2 bg-slate-50 rounded-lg border border-slate-100 hidden sm:block hover:bg-slate-100 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-brand text-white rounded-full flex items-center justify-center font-bold text-lg shadow-sm">
+                  {user?.nome?.charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden md:block text-sm">
+                  <p className="font-bold text-slate-800">
+                    {user?.nome?.split(" ")[0]}
+                  </p>
+                  <p className="text-slate-500 text-xs">Membro Ativo</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        ) : (
+          <span className="text-sm text-slate-500 font-medium px-4 py-2 bg-slate-50 rounded-lg border border-slate-100 hidden sm:block">
+            Bem-vindo visitante
+          </span>
+        )}
       </div>
     </header>
   );
