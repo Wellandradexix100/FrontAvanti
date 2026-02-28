@@ -39,16 +39,15 @@ export function Sidebar({ isOpen, fecharSidebar }) {
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
-        {/* Área da Logo */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100 shrink-0">
           <Link
             to="/"
             className="flex items-center gap-2 text-brand"
             onClick={fecharSidebar}
           >
-            <BookCopy className="w-8 h-8" />
-            <span className="font-bold text-xl tracking-tight text-slate-900">
-              Troca de Conhecimento
+            <img src="/logo.png" alt="Logo Avanti Skills" className="w-6 h-6" />
+            <span className="font-bold text-xl tracking-tight text-slate-900 rounded-md">
+              AprendeAí
             </span>
           </Link>
           <button
