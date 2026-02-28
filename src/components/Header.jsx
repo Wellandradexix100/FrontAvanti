@@ -64,9 +64,17 @@ export function Header({ abrirSidebar }) {
             </Link>
           </div>
         ) : (
-          <span className="text-sm text-slate-500 font-medium px-4 py-2 bg-slate-50 rounded-lg border border-slate-100 hidden sm:block">
-            Bem-vindo visitante
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-500 font-medium hidden sm:block">
+              Bem-vindo, visitante
+            </span>
+            <Link
+              to="/login"
+              className="px-4 py-2 bg-brand hover:bg-brand-dark text-white text-sm font-bold rounded-lg transition-all"
+            >
+              Entrar
+            </Link>
+          </div>
         )}
       </div>
     </header>
