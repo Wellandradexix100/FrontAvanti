@@ -111,7 +111,7 @@ export default function Dashboard() {
                 <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
               </h1>
               <p className="text-slate-600 mt-1 text-sm md:text-base">
-                Gere os conhecimentos que estás a partilhar na plataforma.
+                Cadastre as ofertas que deseja compartilhar na plataforma.
               </p>
             </div>
           </div>
@@ -128,9 +128,8 @@ export default function Dashboard() {
             <Button
               onClick={abrirModalNovaOferta}
               variant="primary"
-              className="flex-1 lg:flex-none py-2 px-4 text-sm shadow-sm w-auto whitespace-nowrap inline-flex justify-center items-center"
+              className=" text-sm shadow-sm  whitespace-nowrap inline-flex justify-center items-center"
             >
-              <Plus className="w-4 h-4 mr-2 shrink-0" />
               Nova Oferta
             </Button>
           </div>
