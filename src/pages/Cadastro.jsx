@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Cadastro() {
+  const [password, setPassword] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -25,62 +31,52 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-4">
-      <div className="p-8 bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-slate-800 mb-6 text-center">
+    <div className="flex items-center justify-around min-h-screen bg-slate-50 p-8">
+      <div className="mr-40 max-lg:hidden">
+        <img 
+        src="/img-cadastro.png" 
+        alt="Imagem de cadastro"
+        className="w-150 h-full" 
+        />
+      </div>
+      <div className="p-8 mr-5 bg-white rounded-2xl shadow-xl w-full max-w-md max-lg:mr-0">
+        <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
           Criar Conta
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              Nome Completo
-            </label>
-            <input
-              type="text"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500"
-              {...register("nome", { required: "O nome é obrigatório" })}
+            <Input
+            label="Nome Completo"
+            type="text"
+            placeholder="Seu nome completo"
+            error={errors.nome?.message}
+            {...register("nome", { required: "O nome é obrigatório" })}
             />
-            {errors.nome && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.nome.message}
-              </span>
-            )}
           </div>
 
           <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              E-mail
-            </label>
-            <input
-              type="email"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500"
-              {...register("email", { required: "O e-mail é obrigatório" })}
+            <Input
+            label="E-mail"
+            type="email"
+            placeholder="seu@email.com"
+            error={errors.email?.message}
+            {...register("email", {
+              required: "O e-mail é obrigatório",
+            })}
             />
-            {errors.email && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </span>
-            )}
           </div>
 
           <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              Telefone
-            </label>
-            <input
-              type="text"
-              placeholder="(00) 00000-0000"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500"
-              {...register("telefone", {
-                required: "O telefone é obrigatório",
-              })}
+            <Input
+            label="Telefone"
+            type="text"
+            placeholder="(00) 00000-0000"
+            error={errors.telefone?.message}
+            {...register("telefone", {
+              required: "O telefone é obrigatório",
+            })}
             />
-            {errors.telefone && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.telefone.message}
-              </span>
-            )}
           </div>
 
           <div>
@@ -94,32 +90,29 @@ export default function Cadastro() {
             />
           </div>
 
-          <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              Senha
-            </label>
-            <input
-              type="password"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500"
-              {...register("senha", {
-                required: "A senha é obrigatória",
-                minLength: { value: 6, message: "No mínimo 6 caracteres" },
-              })}
+          <div className="w-full relative">
+            <Input
+            label="Senha"
+            type={password ? "text" : "password"}
+            placeholder="******"
+            error={errors.senha?.message}
+            {...register("senha", {
+              required: "A senha é obrigatória",
+              minLength: { value: 6, message: "No mínimo 6 caracteres" },
+            })}
             />
-            {errors.senha && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.senha.message}
-              </span>
-            )}
+            <div onClick={() => {setPassword (!password)}}>
+            <FaEye className={password ? "hidden" : "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer"}/>
+            <FaEyeSlash className={password ? "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer" : "hidden"}/>
+            </div>
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors mt-2 disabled:bg-green-400"
+          <Button
+          type="submit"
+          variant="primary"
+          isLoading={isSubmitting}
           >
             {isSubmitting ? "Criando conta..." : "Cadastrar"}
-          </button>
+          </Button>
         </form>
 
         <p className="text-center text-slate-600 mt-6">
