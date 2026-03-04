@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Cadastro() {
+  const [password, setPassword] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -40,7 +44,7 @@ export default function Cadastro() {
           Criar Conta
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 relative">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <Input
             label="Nome Completo"
@@ -86,10 +90,10 @@ export default function Cadastro() {
             />
           </div>
 
-          <div>
+          <div className="w-full relative">
             <Input
             label="Senha"
-            type="password"
+            type={password ? "text" : "password"}
             placeholder="******"
             error={errors.senha?.message}
             {...register("senha", {
@@ -97,6 +101,10 @@ export default function Cadastro() {
               minLength: { value: 6, message: "No mínimo 6 caracteres" },
             })}
             />
+            <div onClick={() => {setPassword (!password)}}>
+            <FaEye className={password ? "hidden" : "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer"}/>
+            <FaEyeSlash className={password ? "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer" : "hidden"}/>
+            </div>
           </div>
           <Button
           type="submit"
