@@ -2,8 +2,11 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import {Input} from "../components/Input";
+import { Button } from "../components/Button";
 
 export default function Login() {
+  
   const {
     register,
     handleSubmit,
@@ -23,64 +26,53 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-4">
-      <div className="p-8 bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-slate-800 mb-6 text-center">
-          Entrar na Plataforma
+    <div className="flex items-center justify-around min-h-screen bg-slate-50 p-8">
+      <div className="mr-40 max-lg:hidden">
+      <img 
+      src="/img-login.png" 
+      alt="Imagem de login"
+      className="w-150 h-full" 
+      />
+      </div>
+      <div className="p-8 mr-5 bg-white rounded-xl shadow-xl w-full max-w-md max-lg:mr-0">
+        <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
+          Login
         </h1>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 relative">
           <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              E-mail
-            </label>
-            <input
-              type="email"
-              placeholder="seu@email.com"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors"
-              {...register("email", {
-                required: "O e-mail é obrigatório",
-              })}
+            <Input 
+            label="E-mail"
+            type="email"
+            placeholder="seu@email.com"
+            error={errors.email?.message}
+            {...register("email", {
+              required: "O e-mail é obrigatório",
+            })}
             />
-            {errors.email && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </span>
-            )}
           </div>
-
           <div>
-            <label className="block text-slate-700 font-medium mb-1">
-              Senha
-            </label>
-            <input
-              type="password"
-              placeholder="******"
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors"
-              {...register("senha", {
-                required: "A senha é obrigatória",
-                minLength: {
-                  value: 6,
-                  message: "A senha deve ter pelo menos 6 caracteres",
-                },
-              })}
+            <Input
+            label="Senha"
+            type="password"
+            placeholder="******"
+            error={errors.senha?.message}
+            {...register("senha", {
+              required: "A senha é obrigatória",
+              minLength: {
+                value: 6,
+                message: "A senha deve ter pelo menos 6 caracteres",
+              },
+            })}
             />
-            {errors.senha && (
-              <span className="text-red-500 text-sm mt-1">
-                {errors.senha.message}
-              </span>
-            )}
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors mt-2 disabled:bg-blue-400"
+          <Button 
+          type="submit" 
+          variant="primary"
+          isLoading={isSubmitting}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
-          </button>
+          </Button>
         </form>
-
         <p className="text-center text-slate-600 mt-6">
           Ainda não tem uma conta?{" "}
           <Link
