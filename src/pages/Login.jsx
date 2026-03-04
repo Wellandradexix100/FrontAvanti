@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import {Input} from "../components/Input";
 import { Button } from "../components/Button";
+import {  FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
+  const [password, setPassword] = useState("");
   
   const {
     register,
@@ -38,8 +41,8 @@ export default function Login() {
         <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
           Login
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 relative">
-          <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="w-full relative">
             <Input 
             label="E-mail"
             type="email"
@@ -49,11 +52,12 @@ export default function Login() {
               required: "O e-mail é obrigatório",
             })}
             />
+          <FaUser className="absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400" />
           </div>
-          <div>
+          <div className="w-full relative">
             <Input
             label="Senha"
-            type="password"
+            type={password ? "text" : "password"}
             placeholder="******"
             error={errors.senha?.message}
             {...register("senha", {
@@ -64,6 +68,10 @@ export default function Login() {
               },
             })}
             />
+          <div onClick={() => {setPassword (!password)}} >
+            <FaEye className={password ? "hidden" : "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer"}/>
+            <FaEyeSlash className={password ? "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer" : "hidden"}/>
+          </div>
           </div>
           <Button 
           type="submit" 
