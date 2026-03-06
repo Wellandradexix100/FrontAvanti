@@ -8,7 +8,7 @@ import { Button } from "../components/Button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Cadastro() {
-  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
     register,
@@ -31,85 +31,91 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="flex items-center justify-around min-h-screen bg-slate-50 p-8">
-      <div className="mr-40 max-lg:hidden">
-        <img 
-        src="/img-cadastro.png" 
-        alt="Imagem de cadastro"
-        className="w-150 h-full" 
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-slate-50 p-4 md:p-8 gap-12 lg:gap-24">
+      <div className="hidden lg:flex flex-1 justify-center items-center max-w-lg">
+        <img
+          src="/img-cadastro.png"
+          alt="Imagem de cadastro"
+          className="w-full h-auto object-contain"
         />
       </div>
-      <div className="p-8 mr-5 bg-white rounded-2xl shadow-xl w-full max-w-md max-lg:mr-0">
+
+      <div className="p-8 bg-white rounded-2xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
           Criar Conta
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div>
-            <Input
+          <Input
             label="Nome Completo"
             type="text"
             placeholder="Seu nome completo"
             error={errors.nome?.message}
             {...register("nome", { required: "O nome é obrigatório" })}
-            />
-          </div>
+          />
 
-          <div>
-            <Input
+          <Input
             label="E-mail"
             type="email"
             placeholder="seu@email.com"
             error={errors.email?.message}
-            {...register("email", {
-              required: "O e-mail é obrigatório",
-            })}
-            />
-          </div>
+            {...register("email", { required: "O e-mail é obrigatório" })}
+          />
 
-          <div>
-            <Input
+          <Input
             label="Telefone"
             type="text"
             placeholder="(00) 00000-0000"
             error={errors.telefone?.message}
-            {...register("telefone", {
-              required: "O telefone é obrigatório",
-            })}
-            />
-          </div>
+            {...register("telefone", { required: "O telefone é obrigatório" })}
+          />
 
           <div>
             <label className="block text-slate-700 font-medium mb-1">
               Descrição (Opcional)
             </label>
             <textarea
-              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500"
+              className="w-full border border-slate-300 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors"
               placeholder="Fale um pouco sobre você e o que gosta de ensinar..."
               {...register("descricao")}
+              rows={3}
             />
           </div>
 
           <div className="w-full relative">
             <Input
-            label="Senha"
-            type={password ? "text" : "password"}
-            placeholder="******"
-            error={errors.senha?.message}
-            {...register("senha", {
-              required: "A senha é obrigatória",
-              minLength: { value: 6, message: "No mínimo 6 caracteres" },
-            })}
+              label="Senha"
+              type={passwordVisible ? "text" : "password"}
+              placeholder="******"
+              error={errors.senha?.message}
+              {...register("senha", {
+                required: "A senha é obrigatória",
+                minLength: { value: 8, message: "No mínimo 8 caracteres" },
+                pattern: {
+                  value: /^(?=.*[A-Za-z])(?=.*\d)/,
+                  message: "A senha precisa ter letras e números",
+                },
+              })}
             />
-            <div onClick={() => {setPassword (!password)}}>
-            <FaEye className={password ? "hidden" : "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer"}/>
-            <FaEyeSlash className={password ? "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer" : "hidden"}/>
-            </div>
+            <button
+              type="button"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+              className="absolute right-3 bottom-[14px] text-slate-400 hover:text-slate-600 focus:outline-none"
+              aria-label={passwordVisible ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {passwordVisible ? (
+                <FaEyeSlash className="w-5 h-5" />
+              ) : (
+                <FaEye className="w-5 h-5" />
+              )}
+            </button>
           </div>
+
           <Button
-          type="submit"
-          variant="primary"
-          isLoading={isSubmitting}
+            type="submit"
+            variant="primary"
+            isLoading={isSubmitting}
+            className="mt-2"
           >
             {isSubmitting ? "Criando conta..." : "Cadastrar"}
           </Button>

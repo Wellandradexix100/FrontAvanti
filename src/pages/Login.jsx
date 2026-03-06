@@ -3,13 +3,13 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import {Input} from "../components/Input";
+import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import {  FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
-  const [password, setPassword] = useState("");
-  
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -29,58 +29,72 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-around min-h-screen bg-slate-50 p-8">
-      <div className="mr-40 max-lg:hidden">
-      <img 
-      src="/img-login.png" 
-      alt="Imagem de login"
-      className="w-150 h-full" 
-      />
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-slate-50 p-4 md:p-8 gap-12 lg:gap-24">
+      <div className="hidden lg:flex flex-1 justify-center items-center max-w-lg">
+        <img
+          src="/img-login.png"
+          alt="Imagem de login"
+          className="w-full h-auto object-contain"
+        />
       </div>
-      <div className="p-8 mr-5 bg-white rounded-xl shadow-xl w-full max-w-md max-lg:mr-0">
+
+      <div className="p-8 bg-white rounded-xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
           Login
         </h1>
+
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="w-full relative">
-            <Input 
-            label="E-mail"
-            type="email"
-            placeholder="seu@email.com"
-            error={errors.email?.message}
-            {...register("email", {
-              required: "O e-mail é obrigatório",
-            })}
+            <Input
+              label="E-mail"
+              type="email"
+              placeholder="seu@email.com"
+              error={errors.email?.message}
+              {...register("email", {
+                required: "O e-mail é obrigatório",
+              })}
             />
-          <FaUser className="absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <FaUser className="absolute right-3 bottom-[14px] w-5 h-5 text-slate-400 pointer-events-none" />
           </div>
+
           <div className="w-full relative">
             <Input
-            label="Senha"
-            type={password ? "text" : "password"}
-            placeholder="******"
-            error={errors.senha?.message}
-            {...register("senha", {
-              required: "A senha é obrigatória",
-              minLength: {
-                value: 6,
-                message: "A senha deve ter pelo menos 6 caracteres",
-              },
-            })}
+              label="Senha"
+              type={passwordVisible ? "text" : "password"}
+              placeholder="******"
+              error={errors.senha?.message}
+              {...register("senha", {
+                required: "A senha é obrigatória",
+                minLength: {
+                  value: 6,
+                  message: "A senha deve ter pelo menos 6 caracteres",
+                },
+              })}
             />
-          <div onClick={() => {setPassword (!password)}} >
-            <FaEye className={password ? "hidden" : "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer"}/>
-            <FaEyeSlash className={password ? "absolute right-3 top-[51px] transform -translate-y-1/2 w-5 h-5 text-slate-400 cursor-pointer" : "hidden"}/>
+            <button
+              type="button"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+              className="absolute right-3 bottom-[14px] text-slate-400 hover:text-slate-600 focus:outline-none"
+              aria-label={passwordVisible ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {passwordVisible ? (
+                <FaEyeSlash className="w-5 h-5" />
+              ) : (
+                <FaEye className="w-5 h-5" />
+              )}
+            </button>
           </div>
-          </div>
-          <Button 
-          type="submit" 
-          variant="primary"
-          isLoading={isSubmitting}
+
+          <Button
+            type="submit"
+            variant="primary"
+            isLoading={isSubmitting}
+            className="mt-2"
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </Button>
         </form>
+
         <p className="text-center text-slate-600 mt-6">
           Ainda não tem uma conta?{" "}
           <Link

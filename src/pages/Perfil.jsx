@@ -47,7 +47,7 @@ export default function Perfil() {
   const onSubmitSenha = async (data) => {
     if (data.novaSenha !== data.confirmarSenha) {
       formSenha.setError("confirmarSenha", {
-        message: "As palavras-passe não coincidem",
+        message: "As senhas não coincidem",
       });
       return;
     }
@@ -58,12 +58,10 @@ export default function Perfil() {
         novaSenha: data.novaSenha,
       });
 
-      toast.success("Palavra-passe atualizada com sucesso!");
+      toast.success("Senha atualizada com sucesso!");
       formSenha.reset();
     } catch (error) {
-      toast.error(
-        error.response?.data?.erro || "Erro ao atualizar a palavra-passe.",
-      );
+      toast.error(error.response?.data?.erro || "Erro ao atualizar a senha.");
     }
   };
 
@@ -281,7 +279,11 @@ export default function Perfil() {
                   error={formSenha.formState.errors.novaSenha?.message}
                   {...formSenha.register("novaSenha", {
                     required: "Obrigatório",
-                    minLength: { value: 6, message: "Mínimo de 6 caracteres" },
+                    minLength: { value: 8, message: "Mínimo de 8 caracteres" },
+                    pattern: {
+                      value: /^(?=.*[A-Za-z])(?=.*\d)/,
+                      message: "A senha precisa ter letras e números",
+                    },
                   })}
                 />
 

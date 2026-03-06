@@ -1,4 +1,4 @@
-import { BookOpen, User, Tag } from "lucide-react";
+import { BookOpen, Tag, UserCircle } from "lucide-react";
 
 export function CardOferta({ oferta, children }) {
   const corNivel = {
@@ -31,8 +31,19 @@ export function CardOferta({ oferta, children }) {
         </div>
 
         {oferta.pessoa && (
-          <div className="flex items-center text-sm text-slate-500">
-            <User className="w-4 h-4 mr-2" />
+          <div className="flex items-center text-sm text-slate-500 mt-1.5">
+            {oferta.pessoa.avatar_url ? (
+              <img
+                src={oferta.pessoa.avatar_url}
+                alt={`Fotografia de ${oferta.pessoa.nome}`}
+                className="w-6 h-6 rounded-full object-cover mr-2 border border-slate-200 shadow-sm"
+              />
+            ) : (
+              <UserCircle
+                className="w-6 h-6 mr-2 text-slate-400"
+                strokeWidth={1.5}
+              />
+            )}
             <span>
               Oferecido por:{" "}
               <span className="font-medium text-slate-700">

@@ -13,6 +13,7 @@ import {
   BookOpen,
   Layers,
   Sparkles,
+  GraduationCap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/Button";
@@ -23,6 +24,8 @@ import { Layout } from "../components/Layout";
 export default function Dashboard() {
   const { user } = useAuth();
   const [minhasOfertas, setMinhasOfertas] = useState([]);
+  const [minhasAquisicoes, setMinhasAquisicoes] = useState([]);
+  const [abaAtiva, setAbaAtiva] = useState("ensino");
   const [carregando, setCarregando] = useState(true);
 
   const [modalOfertaAberto, setModalOfertaAberto] = useState(false);
@@ -30,23 +33,30 @@ export default function Dashboard() {
 
   const formOferta = useForm();
 
-  const carregarMinhasOfertas = async () => {
+  const carregarDadosDashboard = async () => {
+    setCarregando(true);
     try {
-      const resposta = await api.get("/ofertas");
-      const ofertasDoUsuario = resposta.data.filter(
+      const [resOfertas, resAquisicoes] = await Promise.all([
+        api.get("/ofertas"),
+        api.get("/ofertas/minhas-aquisicoes"),
+      ]);
+
+      const ofertasDoUsuario = resOfertas.data.filter(
         (oferta) => oferta.pessoa_id === user?.id,
       );
+
       setMinhasOfertas(ofertasDoUsuario);
+      setMinhasAquisicoes(resAquisicoes.data);
     } catch (error) {
-      console.error("Erro ao carregar ofertas:", error);
-      toast.error("Não foi possível carregar as tuas ofertas.");
+      console.error("Erro ao carregar dashboard:", error);
+      toast.error("Não foi possível carregar os dados do dashboard.");
     } finally {
       setCarregando(false);
     }
   };
 
   useEffect(() => {
-    if (user?.id) carregarMinhasOfertas();
+    if (user?.id) carregarDadosDashboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
@@ -75,21 +85,20 @@ export default function Dashboard() {
         toast.success("Nova oferta criada com sucesso!");
       }
       setModalOfertaAberto(false);
-      carregarMinhasOfertas();
+      carregarDadosDashboard();
     } catch (error) {
       toast.error(
-        error.response?.data?.erro || "Ocorreu um erro ao guardar a oferta.",
+        error.response?.data?.erro || "Ocorreu um erro ao salvar a oferta.",
       );
     }
   };
 
   const handleDeleteOferta = async (id) => {
-    if (!window.confirm("Tens a certeza que desejas apagar esta oferta?"))
-      return;
+    if (!window.confirm("Tem certeza que deseja excluir esta oferta?")) return;
     try {
       await api.delete(`/ofertas/${id}`);
       toast.success("Oferta apagada com sucesso!");
-      carregarMinhasOfertas();
+      carregarDadosDashboard();
     } catch (error) {
       toast.error(error.response?.data?.erro || "Erro ao apagar a oferta.");
     }
@@ -111,7 +120,8 @@ export default function Dashboard() {
                 <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
               </h1>
               <p className="text-slate-600 mt-1 text-sm md:text-base">
-                Cadastre as ofertas que deseja compartilhar na plataforma.
+                Gerencie seus conhecimentos compartilhados e o que você está
+                aprendendo.
               </p>
             </div>
           </div>
@@ -128,7 +138,7 @@ export default function Dashboard() {
             <Button
               onClick={abrirModalNovaOferta}
               variant="primary"
-              className=" text-sm shadow-sm  whitespace-nowrap inline-flex justify-center items-center"
+              className="text-sm shadow-sm whitespace-nowrap inline-flex justify-center items-center"
             >
               Nova Oferta
             </Button>
@@ -136,14 +146,33 @@ export default function Dashboard() {
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-6">
-            <Layers className="w-6 h-6 text-slate-700" />
-            <h2 className="text-2xl font-bold text-slate-800">
-              Minhas Ofertas
-            </h2>
-            <span className="bg-slate-200 text-slate-700 py-0.5 px-2.5 rounded-full text-sm font-semibold ml-2">
-              {!carregando ? minhasOfertas.length : "..."}
-            </span>
+          <div className="flex gap-6 border-b border-slate-200 mb-6">
+            <button
+              onClick={() => setAbaAtiva("ensino")}
+              className={`pb-3 text-base font-semibold border-b-2 transition-colors flex items-center gap-2 ${
+                abaAtiva === "ensino"
+                  ? "border-brand text-brand"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <Layers className="w-5 h-5" />O que eu ensino
+              <span className="bg-slate-100 text-slate-600 py-0.5 px-2 rounded-full text-xs ml-1">
+                {!carregando ? minhasOfertas.length : "..."}
+              </span>
+            </button>
+            <button
+              onClick={() => setAbaAtiva("aprendo")}
+              className={`pb-3 text-base font-semibold border-b-2 transition-colors flex items-center gap-2 ${
+                abaAtiva === "aprendo"
+                  ? "border-brand text-brand"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <GraduationCap className="w-5 h-5" />O que eu aprendo
+              <span className="bg-slate-100 text-slate-600 py-0.5 px-2 rounded-full text-xs ml-1">
+                {!carregando ? minhasAquisicoes.length : "..."}
+              </span>
+            </button>
           </div>
 
           {carregando ? (
@@ -159,53 +188,77 @@ export default function Dashboard() {
                   </div>
                   <div className="h-4 bg-slate-100 rounded-md w-full mb-2"></div>
                   <div className="h-4 bg-slate-100 rounded-md w-5/6 mb-auto"></div>
-                  <div className="flex gap-2 mt-4 pt-4 border-t border-slate-50">
-                    <div className="h-10 bg-slate-200 rounded-lg w-1/2"></div>
-                    <div className="h-10 bg-slate-200 rounded-lg w-1/2"></div>
-                  </div>
                 </div>
               ))}
             </div>
-          ) : minhasOfertas.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 py-20 px-6 flex flex-col items-center text-center">
-              <div className="bg-brand-light p-6 rounded-full mb-6 text-brand">
-                <BookOpen size={48} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                Nenhuma oferta criada
-              </h3>
-              <p className="text-slate-600 max-w-md mb-8">
-                Ainda não partilhaste nenhum conhecimento. Que tal criares a tua
-                primeira oferta ou explorares o que a comunidade está a ensinar?
-              </p>
-              <div className="flex justify-center w-full">
-                <Button
-                  onClick={abrirModalNovaOferta}
-                  variant="primary"
-                  className="py-2.5 px-6 w-auto inline-flex items-center justify-center flex-none"
-                >
-                  <Plus className="w-5 h-5 mr-2 shrink-0" />
+          ) : abaAtiva === "ensino" ? (
+            minhasOfertas.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 py-20 px-6 flex flex-col items-center text-center">
+                <div className="bg-brand-light p-6 rounded-full mb-6 text-brand">
+                  <BookOpen size={48} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                  Nenhuma oferta criada
+                </h3>
+                <p className="text-slate-600 max-w-md mb-8">
+                  Ainda não compartilhou nenhum conhecimento. Que tal criar sua
+                  primeira oferta?
+                </p>
+                <Button onClick={abrirModalNovaOferta} variant="primary">
+                  <Plus className="w-5 h-5 mr-2" />
                   Criar Primeira Oferta
                 </Button>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {minhasOfertas.map((oferta) => (
+                  <CardOferta key={oferta.id} oferta={oferta}>
+                    <Button
+                      onClick={() => abrirModalEditarOferta(oferta)}
+                      variant="secondary"
+                      className="flex-1 py-2 text-sm"
+                    >
+                      <Edit className="w-4 h-4 mr-2" /> Editar
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteOferta(oferta.id)}
+                      variant="danger"
+                      className="flex-1 py-2 text-sm bg-red-50 text-red-600 hover:bg-red-100"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" /> Apagar
+                    </Button>
+                  </CardOferta>
+                ))}
+              </div>
+            )
+          ) : minhasAquisicoes.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 py-20 px-6 flex flex-col items-center text-center">
+              <div className="bg-slate-100 p-6 rounded-full mb-6 text-slate-400">
+                <GraduationCap size={48} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                Nenhum curso adquirido
+              </h3>
+              <p className="text-slate-600 max-w-md mb-8">
+                Você ainda não adquiriu nenhum conhecimento da comunidade. Bora
+                explorar as ofertas disponíveis?
+              </p>
+              <Link to="/">
+                <Button variant="primary">
+                  <Search className="w-5 h-5 mr-2" />
+                  Explorar Ofertas
+                </Button>
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {minhasOfertas.map((oferta) => (
-                <CardOferta key={oferta.id} oferta={oferta}>
+              {minhasAquisicoes.map((aquisicao) => (
+                <CardOferta key={aquisicao.id} oferta={aquisicao.oferta}>
                   <Button
-                    onClick={() => abrirModalEditarOferta(oferta)}
                     variant="secondary"
-                    className="flex-1 py-2 text-sm bg-slate-100 hover:bg-slate-200"
+                    className="w-full py-2 text-sm border-brand text-brand hover:bg-brand-light"
                   >
-                    <Edit className="w-4 h-4 mr-2" /> Editar
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteOferta(oferta.id)}
-                    variant="danger"
-                    className="flex-1 py-2 text-sm bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" /> Apagar
+                    Acessar Conteúdo
                   </Button>
                 </CardOferta>
               ))}
@@ -249,7 +302,7 @@ export default function Dashboard() {
                 </label>
                 <textarea
                   className={`border p-3 rounded-lg outline-none transition-all min-h-[120px] resize-none ${formOferta.formState.errors.descricao ? "border-red-500 ring-1 ring-red-500 bg-red-50" : "border-slate-300 focus:border-brand focus:ring-1 focus:ring-brand"}`}
-                  placeholder="Explica o que vais ensinar de forma clara..."
+                  placeholder="Explique o que você vai ensinar de forma clara..."
                   {...formOferta.register("descricao", {
                     required: "A descrição é obrigatória",
                   })}
@@ -300,7 +353,7 @@ export default function Dashboard() {
                   type="submit"
                   isLoading={formOferta.formState.isSubmitting}
                 >
-                  {ofertaEmEdicao ? "Guardar Alterações" : "Criar Oferta"}
+                  {ofertaEmEdicao ? "Salvar Alterações" : "Criar Oferta"}
                 </Button>
               </div>
             </form>
