@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+  }
+
   body {
     @apply bg-slate-50 text-slate-900 antialiased;
   }
@@ -15,5 +20,62 @@
   }
   ::-webkit-scrollbar-thumb {
     @apply bg-slate-300 rounded-full hover:bg-slate-400;
+  }
+}
+
+@layer components {
+  .cursor-glow-btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .cursor-glow-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        140px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+        rgba(196, 137, 255, 0.45) 0%,
+        rgba(139, 92, 246, 0.30) 40%,
+        rgba(88, 28, 135, 0) 75%
+      );
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cursor-glow-btn:hover::before {
+    opacity: 1;
+  }
+
+  .cursor-glow-section {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: transparent;
+  }
+
+  .cursor-glow-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        260px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+        rgba(196, 137, 255, 0.30) 0%,
+        rgba(139, 92, 246, 0.18) 40%,
+        rgba(88, 28, 135, 0) 75%
+      );
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cursor-glow-section:hover::before {
+    opacity: 1;
   }
 }
