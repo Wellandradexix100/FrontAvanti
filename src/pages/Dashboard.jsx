@@ -37,14 +37,12 @@ export default function Dashboard() {
     setCarregando(true);
     try {
       const [resOfertas, resAquisicoes] = await Promise.all([
-        api.get("/ofertas"),
+        api.get("/ofertas?limite=100"),
         api.get("/ofertas/minhas-aquisicoes"),
       ]);
-
-      const ofertasDoUsuario = resOfertas.data.filter(
+      const ofertasDoUsuario = resOfertas.data.dados.filter(
         (oferta) => oferta.pessoa_id === user?.id,
       );
-
       setMinhasOfertas(ofertasDoUsuario);
       setMinhasAquisicoes(resAquisicoes.data);
     } catch (error) {
@@ -54,7 +52,6 @@ export default function Dashboard() {
       setCarregando(false);
     }
   };
-
   useEffect(() => {
     if (user?.id) carregarDadosDashboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
