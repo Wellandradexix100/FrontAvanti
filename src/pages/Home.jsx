@@ -33,9 +33,9 @@ export default function Home() {
     async function carregarOfertas() {
       setCarregando(true);
       try {
-        const resposta = await api.get(
-          `/ofertas?pagina=${paginaAtual}&limite=3`,
-        );
+        // LÓGICA NOVA: Passando a busca direto pra API
+        const endpoint = `/ofertas?pagina=${paginaAtual}&limite=6${busca ? `&busca=${busca}` : ""}`;
+        const resposta = await api.get(endpoint);
 
         setOfertas(resposta.data.dados);
         setTotalPaginas(resposta.data.paginacao.totalPaginas);
@@ -45,8 +45,14 @@ export default function Home() {
         setCarregando(false);
       }
     }
-    carregarOfertas();
-  }, [paginaAtual]);
+
+    // LÓGICA NOVA: Debounce de 500ms pra não floodar o banco enquanto digita
+    const delayDebounceFn = setTimeout(() => {
+      carregarOfertas();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [paginaAtual, busca]); // Adicionado 'busca' nas dependências
 
   const handleAdquirir = async (ofertaId) => {
     if (!user) {
@@ -76,13 +82,7 @@ export default function Home() {
     scrollToCursos();
   };
 
-  const ofertasFiltradas = ofertas.filter((oferta) => {
-    const termoBusca = busca.toLowerCase();
-    const tituloMatch = oferta.titulo?.toLowerCase().includes(termoBusca);
-    const descricaoMatch = oferta.descricao?.toLowerCase().includes(termoBusca);
-
-    return tituloMatch || descricaoMatch;
-  });
+  // REMOVIDO: const ofertasFiltradas = ... (O back já faz isso agora)
 
   const handleButtonGlowMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -252,7 +252,10 @@ export default function Home() {
                   type="text"
                   placeholder="Buscar por título ou assunto..."
                   value={busca}
-                  onChange={(e) => setBusca(e.target.value)}
+                  onChange={(e) => {
+                    setBusca(e.target.value);
+                    setPaginaAtual(1); // Manda sempre pra página 1 na nova busca
+                  }}
                   className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all shadow-sm text-slate-700 placeholder-slate-400"
                 />
               </div>
@@ -283,7 +286,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          ) : ofertas.length === 0 ? (
+          ) : ofertas.length === 0 && !busca ? ( // LÓGICA NOVA: Banco vazio
             <div className="text-center py-24 bg-brand-light/20 rounded-3xl border border-brand/25 border-dashed">
               <BookOpen className="w-16 h-16 text-brand/55 mx-auto mb-5" />
               <h3 className="text-2xl font-bold text-slate-700 mb-2">
@@ -300,7 +303,7 @@ export default function Home() {
                 </Link>
               )}
             </div>
-          ) : ofertasFiltradas.length === 0 ? (
+          ) : ofertas.length === 0 && busca ? ( // LÓGICA NOVA: Busca sem resultado usando API
             <div className="text-center py-16 bg-brand-light/10 rounded-3xl border border-brand/20 shadow-sm">
               <Search className="w-12 h-12 text-brand/55 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-slate-700 mb-2">
@@ -319,7 +322,8 @@ export default function Home() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ofertasFiltradas.map((oferta) => (
+                {/* LÓGICA NOVA: Puxando direto de 'ofertas' e não 'ofertasFiltradas' */}
+                {ofertas.map((oferta) => (
                   <CardOferta key={oferta.id} oferta={oferta}>
                     {user?.id === oferta.pessoa_id ? (
                       <Button

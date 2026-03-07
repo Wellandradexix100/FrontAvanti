@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
+  Compass,
   Home,
   LayoutDashboard,
   LogIn,
@@ -73,6 +74,14 @@ export function Sidebar({ isOpen, fecharSidebar }) {
               >
                 <LayoutDashboard className="w-5 h-5" />
                 Meu Painel
+              </Link>
+
+              <Link
+                to="/explorar"
+                className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-brand hover:bg-brand-light/30 rounded-xl transition-colors font-medium"
+              >
+                <Compass className="w-5 h-5" />
+                Explorar Cursos
               </Link>
 
               <Link

@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
-
+import Explorar from "./pages/Explorar";
 function App() {
   return (
     <BrowserRouter>
@@ -34,6 +34,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/explorar" element={<Explorar />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
