@@ -105,18 +105,46 @@ export default function Dashboard() {
     <Layout>
       <div className="space-y-8">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative overflow-hidden">
-          <div className="absolute -right-10 -top-10 w-40 h-40 bg-brand-light rounded-full blur-3xl opacity-60"></div>
+          {user?.capa_url ? (
+            <>
+              <div
+                className="absolute inset-0 bg-cover bg-center opacity-[0.15] transition-transform duration-700 hover:scale-105"
+                style={{ backgroundImage: `url(${user.capa_url})` }}
+              ></div>
+
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+            </>
+          ) : (
+            <div className="absolute -right-10 -top-10 w-40 h-40 bg-brand-light rounded-full blur-3xl opacity-60"></div>
+          )}
 
           <div className="flex items-center gap-5 relative z-10 w-full lg:w-auto">
-            <div className="bg-brand-light p-4 rounded-full text-brand shrink-0">
-              <UserCircle size={40} strokeWidth={1.5} />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-white shadow-md flex items-center justify-center bg-slate-100 shrink-0 transition-all hover:scale-105">
+              {user?.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt={user.nome}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+              ) : null}
+
+              <div
+                style={{ display: user?.avatar_url ? "none" : "flex" }}
+                className="w-full h-full items-center justify-center bg-brand text-white font-bold text-2xl sm:text-3xl"
+              >
+                {user?.nome?.charAt(0).toUpperCase()}
+              </div>
             </div>
+
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-2">
                 Olá, {user?.nome?.split(" ")[0]}!{" "}
-                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
               </h1>
-              <p className="text-slate-600 mt-1 text-sm md:text-base">
+              <p className="text-slate-600 mt-1 text-sm md:text-base font-medium">
                 Gerencie seus conhecimentos compartilhados e o que você está
                 aprendendo.
               </p>
@@ -125,8 +153,8 @@ export default function Dashboard() {
 
           <div className="flex flex-row items-center gap-3 relative z-10 mt-2 lg:mt-0 w-full lg:w-auto">
             <Link
-              to="/"
-              className="flex-1 lg:flex-none flex items-center justify-center font-medium py-2 px-4 rounded-lg transition-colors bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm whitespace-nowrap"
+              to="/explorar"
+              className="flex-1 lg:flex-none flex items-center justify-center font-medium py-2 px-4 rounded-lg transition-colors bg-white/80 backdrop-blur-sm border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm whitespace-nowrap shadow-sm"
             >
               <Search className="w-4 h-4 mr-2 shrink-0" />
               Explorar
